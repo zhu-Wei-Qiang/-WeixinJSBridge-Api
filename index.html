@@ -1,0 +1,320 @@
+</pre><pre name="code" class="html"><!DOCTYPE html>
+  <html>
+    <head>
+      <title>微信WeixinJSBridge API</title> 
+      <meta charset="utf-8" /> 
+    </head> 
+    <body>
+      <section class="mod-page-body"> 
+        <div class="mod-page-main wordwrap clearfix"> 
+          <div class="mod-pageheader"></div> 
+          <div class="mod-pagecontent"> 
+            <div class="mod-weixinjsapi"> 
+              <div class="x-desc">微信客户端自带的Js Api：WeixinJSBridge</div> 
+              <div id="WeixinJsApi"> 
+                <div class="x-desc">可用Api</div>
+                <input type="button" id="hideNevBtn" value="隐藏右上角菜单" />
+                <input type="button" id="showNevBtn" value="显示右上角菜单" />
+                <input type="button" id="getNetType" value="获取网络状态" />
+                <input type="button" id="closeWindow" value="关闭当前窗口" /> 
+                <input type="button" id="imagePreview" value="图片预览" />
+                <input type="button" id="scanQRCode" value="扫描二维码" />
+                <input type="button" id="shareFB" value="分享facebook" />
+                <input type="button" id="getInstallState" value="获取某app是否安装" />
+              
+                <div class="x-desc">不可用Api</div>
+                <input type="button" id="sendEmail" value="发邮件" /> 
+                <input type="button" id="addContact" value="添加联系人" /> 
+                <input type="button" id="addEmoticon" value="添加表情" /> 
+                <input type="button" id="cancelAddEmoticon" value="取消下载某表情" /> 
+                <input type="button" id="hasEmoticon" value="查询是否存在某表情" />
+                <input type="button" id="launch3rdApp" value="启动第三方APP" />
+                <input type="button" id="openUrlByExtBrowser" value="用safari打开指定链接" /> 
+                <input type="button" id="geoLocation" value="获取地理位置" />
+                <input type="button" id="openLocation" value="查看地理位置" /> 
+                <input type="button" id="shareWeibo" value="分享微博" />
+                <input type="button" id="getCanIAPPay" value="getCanIAPPay" />
+              
+                <input type="button" id="getBrandWCPayRequest" value="发起公众号微信支付" />
+                <input type="button" id="getBrandIAPPayRequest" value="发起公众号IAP支付" />
+              </div> 
+            </div> 
+          </div> 
+        </div> 
+      </section> 
+
+      <script>
+
+        function onBridgeReady() {
+          WeixinJSBridge.on('menu:share:appmessage', function(argv){
+            // 发送给朋友
+            WeixinJSBridge.invoke('sendAppMessage',{
+                  "link":"http://m.exmail.qq.com/", // 链接地址
+                  "img_url":"http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/images/bizmail/v3/logo1ca3fe.png",
+                  "desc":"WeixinJSBridge API整理",  // 描述
+                  "title":"微信WeixinJSBridge API"  // 标题
+            }, function(res) {
+                alert(JSON.stringify(res))
+            });
+          });
+          WeixinJSBridge.on('menu:share:timeline', function(argv){
+            // 分享到朋友圈
+            WeixinJSBridge.invoke("shareTimeline",{
+              "link":"http://m.exmail.qq.com/",// 链接地址
+              "img_url":"http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/images/bizmail/v3/logo1ca3fe.png",// 分享到朋友圈的缩略图url
+              "desc":"WeixinJSBridge API整理",// 描述
+              "title":"微信WeixinJSBridge API"// 标题
+            },
+            function(res){
+              alert(JSON.stringify(res));
+            })
+          });
+        }
+          
+        if (typeof WeixinJSBridge === "undefined"){
+          if (document.addEventListener){
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+          }
+        }else{
+          onBridgeReady();
+        }
+      
+        document.addEventListener("WeixinJSBridgeReady",function(){
+
+          // 隐藏右上角菜单 点击后打开右上角菜单（转发、分享、收藏、打开到等）进行隐藏
+          document.getElementById('hideNevBtn').addEventListener('click',function(){
+            WeixinJSBridge.invoke('hideOptionMenu',{},function(res){
+              alert(JSON.stringify(res))
+            });
+          })
+
+          // 显示右上角菜单 点击后打开右上角菜单（转发、分享、收藏、打开到等）显示
+          document.getElementById('showNevBtn').addEventListener('click',function(){
+            WeixinJSBridge.invoke('showOptionMenu',{},function(res){
+              alert(JSON.stringify(res))
+            });
+          })
+
+          // 获取网络状态  network_type:fail、wifi、2g、3g+
+          document.getElementById("getNetType").addEventListener("click",function(){
+            WeixinJSBridge.invoke("getNetworkType",{},function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+          // 关闭页面 退出当前页
+          document.getElementById("closeWindow").addEventListener("click",function(){
+            WeixinJSBridge.invoke("closeWindow",{},function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+          // 预览图片   预览存放的图片
+          document.getElementById('imagePreview').addEventListener('click',function(){
+            WeixinJSBridge.invoke('imagePreview', {
+              current: 'http://img1.gtimg.com/10/1048/104857/10485726_980x1200_0.jpg', // 要预览urls中第几张图片的url
+              urls: [ // 所有图片的url列表，数组格式
+                'http://img1.gtimg.com/10/1048/104857/10485731_980x1200_0.jpg',
+                'http://img1.gtimg.com/10/1048/104857/10485726_980x1200_0.jpg',
+                'http://img1.gtimg.com/10/1048/104857/10485729_980x1200_0.jpg'
+                ]     
+              }, function(res){
+                alert(JSON.stringify(res))
+            });
+          })
+
+          // 扫描二维码    打开相机进行扫描
+          document.getElementById("scanQRCode").addEventListener("click",function(){
+              WeixinJSBridge.invoke('scanQRCode',{
+                'appid': 'wx641d3d5c930b86ac', // 公众号appID
+                'desc' : 'desc', // 描述
+                'needResult' : 0, // 非必填，扫码处理方式。1：直接返回扫描结果，0：扫码结果由微信处理。默认为0
+                'scanType':['qrCode','barCode'] // 非必填，扫码类型，参数类型是数组，二维码是'qrCode'，一维码是'barCode'，默认全选
+              },function(res){
+                alert(JSON.stringify(res))
+              });
+            })
+
+          // 分享facebook
+          document.getElementById("shareFB").addEventListener("click",function(){
+            WeixinJSBridge.invoke("shareFB",{
+              "link":"http://m.exmail.qq.com"
+            })
+          })
+
+          // 获取某app是否安装
+          document.getElementById("getInstallState").addEventListener("click",function(){
+            WeixinJSBridge.invoke("getInstallState",{  
+              'appid':'wx641d3d5c930b86ac',
+              "packageUrl":"mqq://"       // qq
+              // "packageUrl":'mtxx.open://'   // 美图秀秀
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+            
+          // 发邮件
+          document.getElementById("sendEmail").addEventListener("click",function(){
+            WeixinJSBridge.invoke("sendEmail",{
+              "title" : "title!", // 标题
+              "content" : "i am an Email!", //正文
+              },function(res){
+                alert(JSON.stringify(res))
+            })
+          })
+
+          // 添加联系人       无效appid
+          document.getElementById("addContact").addEventListener("click",function(){
+            WeixinJSBridge.invoke("addContact",{
+              'appid': 'wx641d3d5c930b86ac',// 公众号appID
+              "webtype":"1", // 添加联系人的场景,1表示企业联系人,现在只有1
+              "username":"zqh1436713170"  //联系人微信
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+          // 添加表情包   系统没有该方法
+          document.getElementById("addEmoticon").addEventListener("click",function(){
+            WeixinJSBridge.invoke("addEmoticon",{
+              'appid':'wx641d3d5c930b86ac',
+              "url":"http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/images/bizmail/v3/icons_features1ca3fe.png",
+              "thumb_url":"https://gw.alicdn.com/tps/TB1W_X6OXXXXXcZXVXXXXXXXXXX-400-400.png"
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+          //取消下载某表情    系统没有该方法
+          document.getElementById("cancelAddEmoticon").addEventListener("click",function(){
+            WeixinJSBridge.invoke("cancelAddEmoticon",{
+              'appid':'wx641d3d5c930b86ac',
+              "url":"http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/images/bizmail/v3/icons_features1ca3fe.png"
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+          // 查询是否存在该表情     系统没有该方法
+          document.getElementById("hasEmoticon").addEventListener("click",function(){
+            WeixinJSBridge.invoke("hasEmoticon",{
+              'appid':'wx641d3d5c930b86ac',
+              "url":"http://rescdn.qqmail.com/bizmail/zh_CN/htmledition/images/bizmail/v3/icons_features1ca3fe.png"
+            },
+            function(res){
+              alert(JSON.stringify(res))
+              })
+          })
+
+          // 启动第三方app    丢失 auguments
+          document.getElementById("launch3rdApp").addEventListener("click",function(){
+            WeixinJSBridge.invoke("launch3rdApp",{ 
+              "appId" : "wx641d3d5c930b86ac", //公众号名称，由商户传入
+              'messageExt': 'from=weixin_webview',
+              'extInfo': 'from=weixin_webview'
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+          // 用safari打开指定链接    失败 权限值正在离线验证
+          document.getElementById("openUrlByExtBrowser").addEventListener("click",function(){
+            WeixinJSBridge.invoke("openUrlByExtBrowser",{
+              "appId" : "wx641d3d5c930b86ac",
+              "url" : "http://baidu.com"
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+          // 获取地理位置     失败 权限值正在离线验证
+          document.getElementById("geoLocation").addEventListener("click",function(){
+            WeixinJSBridge.invoke('geoLocation', {
+              'appId':'wx641d3d5c930b86ac', // 公众号appID
+              'scope':'jsapi_location', // 调用该jsapi所需权限scope（值为jsapi_location）
+              'signType':'sha1', // 签名方式（目前仅支持SHA1）
+              'addrSign': 'xxx', // 签名
+              'timeStamp':'1409821938', // 时间戳
+              'nonceStr': +new Date(), // 随机字符串
+              'type': 'wgs84'// 非必填，定位坐标类型，android下支持的取值：wgs84、gcj02；ios下没有该参数，全部使用wgs84
+            }, function(res) {
+                alert(JSON.stringify(res))
+            });
+          })
+
+          // 查看地理位置     失败 权限值正在离线验证
+          document.getElementById("openLocation").addEventListener("click",function(){
+            WeixinJSBridge.invoke("openLocation",{  
+              "latitude" : 23.113, //纬度
+              "longitude" : 113.23, //经度
+              "name" : "TIT创意园", //POI名称
+              "address" : "广州市海珠区新港中路397号", //地址
+              "scale" : 14, //地图缩放级别
+              "infoUrl" : "http://weixin.qq.com/", //查看位置界面底部的超链接        
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+          // 分享微博    系统没有该方法
+          document.getElementById("shareWeibo").addEventListener("click",function(){
+            WeixinJSBridge.invoke("shareWeibo",{
+              "type":"link",
+              "link":"http://m.exmail.qq.com"
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+          // getCanIAPPay   系统没有该方法
+          document.getElementById("getCanIAPPay").addEventListener("click",function(){
+            WeixinJSBridge.invoke("getCanIAPPay",{ },
+              function(res){
+                alert(JSON.stringify(res))
+            })
+          })
+          
+          //  发起公众号微信支付   公众号无权限 暂未验明
+          document.getElementById("getBrandWCPayRequest").addEventListener("click",function(){
+            WeixinJSBridge.invoke("getBrandWCPayRequest",{
+              "appId" : "wx641d3d5c930b86ac", //公众号名称，由商户传入
+              "timeStamp" : "189026618", //时间戳 这里随意使用了一个值
+              "nonceStr" : "adssdasssd13d", //随机串
+              "package" :
+              "body=xxx&fee_type=1&input_charset=GBK¬ify_url=http&out_trade_no=16642817866003386000&partner=1900000109&return_url=http&spbill_create_ip=127.0.0.1&total_fee=1&sign=273B7EEEE642A8E41F27213D8517E0E4", //扩展字段，由商户传入
+              "signType" : "SHA1", //微信签名方式:sha1
+              "paySign" : "b737015b5b1eabe5db580945a07eac08c7bb55f8" //微信签名
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+          
+          // 发起公众号IAP支付     公众号无支付权限 暂未验明
+          document.getElementById("getBrandIAPPayRequest").addEventListener("click",function(){
+            WeixinJSBridge.invoke("getBrandIAPPayRequest",{
+              "appId" : "wx641d3d5c930b86ac", //公众号名称，由商户传入
+              "timeStamp" : "189026618", //时间戳 这里随意使用了一个值
+              "nonceStr" : "adssdasssd13d", //随机串
+              "package" : "bankType=CITIC_CREDIT&bankName=%e4%b8%ad%e4%bf%a1%e9%93%b6%e8%a1%8c&sign=CF8922F49431FFE8A1834D0B32B25CE3",
+              //扩展字段，由商户传入
+              "signType" : "SHA1", //微信签名方式:sha1
+              "paySign" : "1e6f13f78ca0ec43fbb80899087f77568af66987" //微信签名
+            },
+            function(res){
+              alert(JSON.stringify(res))
+            })
+          })
+
+        });
+      </script> 
+    </body>
+  </html>
